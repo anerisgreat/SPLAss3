@@ -7,4 +7,7 @@ public class Ack implements StoCMessage{
         this.msgOpCode = msgOpCode;
         this.print = print;
     }
+
+    public short getMsgOpCode(){return this.msgOpCode; }
+    public String getPrint(){return this.print; }
 }

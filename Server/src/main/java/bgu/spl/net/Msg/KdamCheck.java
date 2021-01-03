@@ -1,8 +1,7 @@
 package bgu.spl.net.Msg;
 
-public class KdamCheck implements CtoSMessage{
-    private short courseNum;
+public class KdamCheck extends CourseNumEvent{
     public  KdamCheck(short courseNum) {
-        this.courseNum = courseNum;
+        super(courseNum);
     }
 }

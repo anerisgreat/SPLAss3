@@ -1,8 +1,7 @@
 package bgu.spl.net.Msg;
 
-public class CourseReg implements CtoSMessage{
-    private short courseNum;
+public class CourseReg extends CourseNumEvent{
     public CourseReg(short courseNum) {
-        this.courseNum = courseNum;
+        super(courseNum);
     }
 }

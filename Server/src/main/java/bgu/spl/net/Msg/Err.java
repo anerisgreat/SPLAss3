@@ -5,4 +5,5 @@ public class Err implements StoCMessage{
     public Err(short msgOpCode) {
         this.msgOpCode = msgOpCode;
     }
+    public short getMsgOpCode(){return this.msgOpCode; }
 }
