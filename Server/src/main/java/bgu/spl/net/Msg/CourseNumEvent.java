@@ -1,4 +1,4 @@
-pakcage bgu.spl.net.Msg;
+package bgu.spl.net.Msg;
 
 public class CourseNumEvent implements CtoSMessage{
     private short courseNum;
@@ -6,4 +6,6 @@ public class CourseNumEvent implements CtoSMessage{
     public CourseNumEvent(short courseNum){
         this.courseNum = courseNum;
     }
+
+    public short getCourseNum(){ return courseNum; }
 }

@@ -1,13 +1,11 @@
 package bgu.spl.net.Msg;
 
-public class Ack implements StoCMessage{
-    private short msgOpCode;
+public class Ack extends OpCodeEvent{
     private String print;
     public Ack(short msgOpCode, String print) {
-        this.msgOpCode = msgOpCode;
+        super(msgOpCode);
         this.print = print;
     }
 
-    public short getMsgOpCode(){return this.msgOpCode; }
     public String getPrint(){return this.print; }
 }
