@@ -1,5 +1,8 @@
 package bgu.spl.net.Db;
 
+import bgu.spl.net.srv.User;
+import org.graalvm.compiler.lir.LIRInstruction;
+
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,12 +20,18 @@ public class Database {
 
     private static Database singleton;
     private List<Course> courses;
+    private List<String> admins;
+    private List<String> loggedIn;
     private ConcurrentHashMap<String, String> users;
+    private ConcurrentHashMap<String, List<Course>> studentCourses;
 
     //to prevent user from creating new Database
     private Database() {
         courses = new LinkedList<>();
         users = new ConcurrentHashMap<>();
+        admins = new LinkedList<>();
+        loggedIn = new LinkedList<>();
+        studentCourses = new ConcurrentHashMap<>();
     }
 
     /**
@@ -81,5 +90,145 @@ public class Database {
             throw new Exception("illegal course parameters");
         }
         return new Course(courseNum, courseName, kdamCourses, maxCourses);
+    }
+
+    public boolean adminReg(String userName, String password) {
+        if (users.contains(userName)) {
+            return false;
+            //does admin have courses???
+        }
+        else {
+            users.put(userName, password);
+            admins.add(userName);
+            return true;
+        }
+    }
+
+    public boolean studentReg(String userName, String password) {
+        if (users.contains(userName)) {
+            return false;
+        }
+        else {
+            users.put(userName, password);
+            studentCourses.put(userName, new LinkedList<>());
+            return true;
+        }
+    }
+
+    public boolean Login(String userName, String password) {
+        if (!users.contains(userName) || loggedIn.contains(userName) || users.get(userName) != password) {
+            return false;
+        }
+        loggedIn.add(userName);
+        return true;
+    }
+
+    public boolean Logout(String userName) {
+        if (!loggedIn.contains(userName)) {
+            return false;
+        }
+        loggedIn.remove(userName);
+        return true;
+    }
+
+    public boolean CourseReg(int courseNum, String userName) {
+        if (!canRegisterToCourse(courseNum, userName)){
+            return false;
+        }
+        else{
+            studentCourses.get(userName).add(getCourseByNum(courseNum));
+            return true;
+        }
+    }
+
+    public String kdamCheck(int courseNum) {
+        if(!courses.contains(getCourseByNum(courseNum))){
+            return null;
+        }
+        else{
+            return getCourseByNum(courseNum).getKdamCourses().toString();
+        }
+    }
+
+    public String courseStat(int courseNum) {
+        Course curr = getCourseByNum(courseNum);
+        if (!courses.contains(curr)) {
+            return null;
+        }
+        int courseCount = countCourse(courseNum);
+        String userMsg = "Course: (" + curr.getCourseNum() + ") " + curr.getCourseName() + "\n";
+        userMsg = userMsg + "Seats Available: " + (curr.getMaxCourses() - courseCount) + " / " + courseCount + "\n";
+        userMsg = userMsg + "Students Registered: " + getStudents(courseNum);
+        return userMsg;
+    }
+
+    public String studentStat(String userName) {
+        String userMsg = "Student: " + userName + "\n";
+        userMsg = userMsg + "Courses" + studentCourses.get(userName);
+        return userMsg;
+    }
+
+    public boolean isRegistered(int courseNum, String userName) {
+        return studentCourses.get(userName).contains(courseNum);
+    }
+
+    public boolean unRegister(int courseNum, String userName) {
+        if(!studentCourses.get(userName).contains(courseNum)) {
+            return false;
+        }
+        studentCourses.get(userName).remove(courseNum);
+        return true;
+    }
+
+    public String myCourses(String userName){
+        return studentCourses.get(userName).toString();
+    }
+
+    private boolean canRegisterToCourse(int courseNum, String userName) {
+        boolean ans = true;
+        Course curr = getCourseByNum(courseNum);
+        //checks if there is such course
+        ans = ans && getCourseByNum(courseNum) != null;
+        //checks if student is not already registered
+        ans = ans && !studentCourses.get(userName).contains(getCourseByNum(courseNum));
+        //check if course has an open seat
+        ans = ans && (countCourse(courseNum) < curr.getMaxCourses());
+        //check if the student has all the kdam courses
+        for (int i : curr.getKdamCourses()) {
+            ans = ans && studentCourses.get(userName).contains(i);
+        }
+        return ans;
+    }
+
+    //returns a course with courseNum as his number - null if no such course
+    private Course getCourseByNum(int courseNum) {
+        for(Course c : courses) {
+            if(c.getCourseNum() == courseNum) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    //counts the number of students that attend this course
+    private int countCourse(int courseNum) {
+        int counter = 0;
+        for (String user : users.keySet()) {
+            if(studentCourses.get(user).contains(courseNum)) {
+                counter ++;
+            }
+        }
+        return counter;
+    }
+
+    private List<String> getStudents(int courseNum) {
+        List<String> ans = new LinkedList<>();
+        for (String user : users.keySet()) {
+            if(studentCourses.get(user).contains(courseNum)) {
+                ans.add(user);
+            }
+        }
+        Collections.sort(ans);
+        return ans;
     }
 }
