@@ -7,15 +7,18 @@ import bgu.spl.net.api.MessagingProtocol;
 
 public class MsgProtocol implements MessagingProtocol<Message> {
 
-    private User user;
+    private User user; //stores details of the user which has this instance of MsgProtocol in his connection handler
+    boolean shouldTerminate;
 
     public MsgProtocol() {
         user = new User();
+        shouldTerminate = false;
     }
 
     @Override
     public Message process(Message msg) {
         if(!user.getLoggedIn()){
+            //login msg (OpCode = 1) is the only one acceptable before logging in
             if(msg.getOpCode() == 1) {
                 return msg.process(user);
             }
@@ -27,8 +30,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
     }
 
     @Override
+
     public boolean shouldTerminate() {
-        return false;
+        return shouldTerminate;
     }
 
 }

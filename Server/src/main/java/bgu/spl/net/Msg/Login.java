@@ -13,6 +13,9 @@ public class Login extends absMsg implements CtoSMessage{
 
     @Override
     public Message process(User user) {
+        if(user.getLoggedIn()) {
+            return new Err(getOpCode());
+        }
         if (getDb().Login(userName, password)) {
             user.setLoggedIn(true);
             user.setUserName(userName);

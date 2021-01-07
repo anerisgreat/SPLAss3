@@ -19,18 +19,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Database {
 
     private static Database singleton;
-    private List<Course> courses;
-    private List<String> admins;
-    private List<String> loggedIn;
-    private ConcurrentHashMap<String, String> users;
-    private ConcurrentHashMap<String, List<Course>> studentCourses;
+    private List<Course> courses; // stores all the courses
+    private List<String> admins; //stores all the usernames who have admin access
+    private ConcurrentHashMap<String, String> users; //stores all the users who are registered <username, password>
+    private ConcurrentHashMap<String, List<Course>> studentCourses; //stores the courses each student is registered to <username, list of courses>
 
     //to prevent user from creating new Database
     private Database() {
         courses = new LinkedList<>();
-        users = new ConcurrentHashMap<>();
+        users = new ConcurrentHashMap<>(); //stores
         admins = new LinkedList<>();
-        loggedIn = new LinkedList<>();
         studentCourses = new ConcurrentHashMap<>();
     }
 
@@ -64,6 +62,7 @@ public class Database {
         return false;
     }
 
+    //reads a single course from the input file
     private Course initCourse(String courseLine) throws Exception {
         int courseNum;
         String courseName;
@@ -91,7 +90,7 @@ public class Database {
         }
         return new Course(courseNum, courseName, kdamCourses, maxCourses);
     }
-
+    //registers an admin to system return false if failed
     public boolean adminReg(String userName, String password) {
         if (users.contains(userName)) {
             return false;
@@ -104,6 +103,7 @@ public class Database {
         }
     }
 
+    //registers a student to the system return false if failed
     public boolean studentReg(String userName, String password) {
         if (users.contains(userName)) {
             return false;
@@ -115,14 +115,15 @@ public class Database {
         }
     }
 
+    //tries to login return false if failed
     public boolean Login(String userName, String password) {
-        if (!users.contains(userName) || loggedIn.contains(userName) || users.get(userName) != password) {
+        if (!users.contains(userName) || users.get(userName) != password) {
             return false;
         }
-        loggedIn.add(userName);
         return true;
     }
 
+    /*
     public boolean Logout(String userName) {
         if (!loggedIn.contains(userName)) {
             return false;
@@ -131,6 +132,9 @@ public class Database {
         return true;
     }
 
+     */
+
+    //register a student to a course
     public boolean CourseReg(int courseNum, String userName) {
         if (!canRegisterToCourse(courseNum, userName)){
             return false;
@@ -141,6 +145,7 @@ public class Database {
         }
     }
 
+    //returns the list of kdam courses for a course
     public String kdamCheck(int courseNum) {
         if(!courses.contains(getCourseByNum(courseNum))){
             return null;
@@ -150,6 +155,7 @@ public class Database {
         }
     }
 
+    //return the stats for a course
     public String courseStat(int courseNum) {
         Course curr = getCourseByNum(courseNum);
         if (!courses.contains(curr)) {
@@ -162,16 +168,19 @@ public class Database {
         return userMsg;
     }
 
+    //returns the stats for a student
     public String studentStat(String userName) {
         String userMsg = "Student: " + userName + "\n";
         userMsg = userMsg + "Courses" + studentCourses.get(userName);
         return userMsg;
     }
 
+    //checks if a student is registered to a course
     public boolean isRegistered(int courseNum, String userName) {
         return studentCourses.get(userName).contains(courseNum);
     }
 
+    //unregisters a student from a course return false if failed
     public boolean unRegister(int courseNum, String userName) {
         if(!studentCourses.get(userName).contains(courseNum)) {
             return false;
@@ -180,10 +189,12 @@ public class Database {
         return true;
     }
 
+    //returns all the courses a student attends
     public String myCourses(String userName){
         return studentCourses.get(userName).toString();
     }
 
+    //check if a student can register to a course
     private boolean canRegisterToCourse(int courseNum, String userName) {
         boolean ans = true;
         Course curr = getCourseByNum(courseNum);
@@ -221,6 +232,7 @@ public class Database {
         return counter;
     }
 
+    //returns a list of student who are registered to a course
     private List<String> getStudents(int courseNum) {
         List<String> ans = new LinkedList<>();
         for (String user : users.keySet()) {
