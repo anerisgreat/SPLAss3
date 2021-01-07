@@ -8,11 +8,10 @@ import bgu.spl.net.api.MessagingProtocol;
 public class MsgProtocol implements MessagingProtocol<Message> {
 
     private User user; //stores details of the user which has this instance of MsgProtocol in his connection handler
-    boolean shouldTerminate;
+
 
     public MsgProtocol() {
         user = new User();
-        shouldTerminate = false;
     }
 
     @Override
@@ -25,6 +24,10 @@ public class MsgProtocol implements MessagingProtocol<Message> {
             else return new Err(msg.getOpCode());
         }
         else {
+            //logout
+            if(msg.getOpCode() == 4) {
+                user.setShouldTerminate(true);
+            }
             return msg.process(user);
         }
     }
@@ -32,7 +35,7 @@ public class MsgProtocol implements MessagingProtocol<Message> {
     @Override
 
     public boolean shouldTerminate() {
-        return shouldTerminate;
+        return user.getShouldTerminate();
     }
 
 }
