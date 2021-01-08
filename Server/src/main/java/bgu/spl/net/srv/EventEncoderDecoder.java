@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Arrays;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.Msg.*;
@@ -22,6 +23,36 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
         public MessageFieldInfo(Class p_messageType, fieldType[] p_fields){
             MessageType = p_messageType;
             Fields = p_fields;
+        }
+    }
+
+    static class EncoderHelper{
+        //Encoder fields
+        private byte[] encoderBuff;
+        private short currEncoderIndex;
+
+        public EncoderHelper(){
+            encoderBuff = new byte[128];
+            currEncoderIndex = 0;
+        }
+
+        public void encode(Short p_short){
+            encoderBuff[currEncoderIndex] = (byte)((p_short & 0xFF00) >> 8);
+            encoderBuff[currEncoderIndex + 1] = (byte)(p_short & 0xFF);
+            currEncoderIndex += 2;
+        }
+
+        public void encode(String p_string){
+            for(int i = 0; i < p_string.length(); ++i){
+                encoderBuff[currEncoderIndex] = (byte)(p_string.charAt(i));
+                currEncoderIndex++;
+            }
+            encoderBuff[currEncoderIndex] = 0;
+            currEncoderIndex++;
+        }
+
+        public byte[] getArr(){
+            return Arrays.copyOfRange(encoderBuff, 0, currEncoderIndex);
         }
     }
 
@@ -76,7 +107,6 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
 
         opCodeToEventType.put((short)13, new MessageFieldInfo(Err.class,
                                                              new fieldType[]{fieldType.shortfield}));
-        /*
 
         eventTypeToOpCode = new HashMap<Class, Short>();
         eventTypeToOpCode.put(AdminReg.class, (short)1);
@@ -92,9 +122,9 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
         eventTypeToOpCode.put(MyCourses.class, (short)11);
         eventTypeToOpCode.put(Ack.class, (short)12);
         eventTypeToOpCode.put(Err.class, (short)13);
-        */
     }
 
+    //Decoder fields
     private byte[] byteArr;
     private short buffIndex;
     private short fieldIndex;
@@ -217,7 +247,65 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
 
     @Override
     public byte[] encode(CtoSMessage message) {
-        return new byte[0];
+        EncoderHelper h = new EncoderHelper();
+        h.encode(eventTypeToOpCode.get(h.getClass()));
+
+        if(message instanceof AdminReg){
+            AdminReg m = (AdminReg)message;
+            h.encode(m.userName);
+            h.encode(m.password);
+        }
+        else if(message instanceof StudentReg){
+            StudentReg m = (StudentReg)message;
+            h.encode(m.userName);
+            h.encode(m.password);
+        }
+        else if(message instanceof Login){
+            Login m = (Login)message;
+            h.encode(m.userName);
+            h.encode(m.password);
+        }
+        else if(message instanceof Logout){
+            //No fields
+        }
+        else if(message instanceof CourseReg){
+            CourseReg m = (CourseReg)message;
+            h.encode(m.courseNum);
+        }
+        else if(message instanceof KdamCheck){
+            KdamCheck m = (KdamCheck)message;
+            h.encode(m.courseNum);
+        }
+        else if(message instanceof CourseStat){
+            CourseStat m = (CourseStat)message;
+            h.encode(m.courseNum);
+        }
+        else if(message instanceof StudentStat){
+            StudentStat m = (StudentStat)message;
+            h.encode(m.studentName);
+        }
+        else if(message instanceof IsRegistered){
+            IsRegistered m = (IsRegistered)message;
+            h.encode(m.courseNum);
+        }
+        else if(message instanceof UnRegister){
+            UnRegister m = (UnRegister)message;
+            h.encode(m.courseNum);
+        }
+        else if(message instanceof MyCourses){
+            //No fields
+        }
+        else if(message instanceof Ack){
+            Ack m = (Ack)message;
+            h.encode(m.opCode);
+            h.encode(m.print);
+        }
+        else if(message instanceof Err){
+            Err m = (Err)message;
+            h.encode(m.opCode);
+        }
+                                            
+        return h.getArr();
     }
 
     public EventEncoderDecoder(){
