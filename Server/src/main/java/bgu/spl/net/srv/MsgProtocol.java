@@ -24,10 +24,6 @@ public class MsgProtocol implements MessagingProtocol<Message> {
             else return new Err(msg.getOpCode());
         }
         else {
-            //logout
-            if(msg.getOpCode() == 4) {
-                user.setShouldTerminate(true);
-            }
             return msg.process(user);
         }
     }

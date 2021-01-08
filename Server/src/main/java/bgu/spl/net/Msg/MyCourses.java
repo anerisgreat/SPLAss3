@@ -9,6 +9,10 @@ public class MyCourses extends absMsg{
 
     @Override
     public Message process(User user) {
-        return new Ack(getOpCode(), getDb().myCourses(user.getUserName()));
+        String ans = getDb().myCourses(user.getUserName());
+        if (ans == null) {
+            return new Err(getOpCode());
+        }
+        return new Ack(getOpCode(), ans);
     }
 }

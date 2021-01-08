@@ -11,7 +11,7 @@ public class CourseStat extends absMsg{
 
     @Override
     public Message process(User user) {
-        String msg = getDb().courseStat(courseNum);
+        String msg = getDb().courseStat(courseNum, user.getUserName());
         if (msg == null) {
             return new Err(getOpCode());
         }

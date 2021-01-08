@@ -19,6 +19,7 @@ public class Login extends absMsg implements CtoSMessage{
         if (getDb().Login(userName, password)) {
             user.setLoggedIn(true);
             user.setUserName(userName);
+            user.setShouldTerminate(false);
             return new Ack(getOpCode(),"");
         }
         return new Err(getOpCode());

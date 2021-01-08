@@ -20,28 +20,28 @@ public class Database {
 
     private static Database singleton;
     private List<Course> courses; // stores all the courses
-    private List<String> admins; //stores all the usernames who have admin access
-    private ConcurrentHashMap<String, String> users; //stores all the users who are registered <username, password>
-    private ConcurrentHashMap<String, List<Course>> studentCourses; //stores the courses each student is registered to <username, list of courses>
+    private List<DB_User> users; // stores all the users
+
+    private static class SingletonHolder {
+        private static Database instance = new Database();
+    }
+
+
 
     //to prevent user from creating new Database
     private Database() {
         courses = new LinkedList<>();
-        users = new ConcurrentHashMap<>(); //stores
-        admins = new LinkedList<>();
-        studentCourses = new ConcurrentHashMap<>();
+        users = new LinkedList<>();
     }
+
+
 
     /**
      * Retrieves the single instance of this class.
      */
     public static Database getInstance() {
-        if (singleton == null) {
-            singleton = new Database();
-        }
-        return singleton;
+        return SingletonHolder.instance;
     }
-
     /**
      * loades the courses from the file path specified
      * into the Database, returns true if successful.
@@ -92,57 +92,54 @@ public class Database {
     }
     //registers an admin to system return false if failed
     public boolean adminReg(String userName, String password) {
-        if (users.contains(userName)) {
-            return false;
-            //does admin have courses???
-        }
-        else {
-            users.put(userName, password);
-            admins.add(userName);
-            return true;
+        synchronized (users) {
+            if (getUser(userName) != null) {
+                return false;
+            }
+            else {
+                users.add(new DB_User(userName, password, true));
+                return true;
+            }
         }
     }
 
     //registers a student to the system return false if failed
     public boolean studentReg(String userName, String password) {
-        if (users.contains(userName)) {
-            return false;
-        }
-        else {
-            users.put(userName, password);
-            studentCourses.put(userName, new LinkedList<>());
-            return true;
+        synchronized (users) {
+            if (getUser(userName) != null) {
+                return false;
+            }
+            else {
+                users.add(new DB_User(userName, password, false));
+                return true;
+            }
         }
     }
 
     //tries to login return false if failed
     public boolean Login(String userName, String password) {
-        if (!users.contains(userName) || users.get(userName) != password) {
+        DB_User dbu = getUser(userName);
+        if (dbu == null || dbu.isLoggedIn() || dbu.getPassWord() != password) {
             return false;
         }
+        dbu.setLoggedIn(true);
         return true;
     }
 
-    /*
-    public boolean Logout(String userName) {
-        if (!loggedIn.contains(userName)) {
-            return false;
-        }
-        loggedIn.remove(userName);
-        return true;
+
+    public void logout(String userName) {
+        getUser(userName).setLoggedIn(false);
     }
 
-     */
 
     //register a student to a course
     public boolean CourseReg(int courseNum, String userName) {
-        if (!canRegisterToCourse(courseNum, userName)){
-            return false;
-        }
-        else{
-            studentCourses.get(userName).add(getCourseByNum(courseNum));
+        DB_User dbu = getUser(userName);
+        Course course = getCourseByNum(courseNum);
+        if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
             return true;
         }
+        return false;
     }
 
     //returns the list of kdam courses for a course
@@ -156,59 +153,53 @@ public class Database {
     }
 
     //return the stats for a course
-    public String courseStat(int courseNum) {
+    public String courseStat(int courseNum, String userName) {
         Course curr = getCourseByNum(courseNum);
-        if (!courses.contains(curr)) {
+        if (!courses.contains(curr) || !getUser(userName).isAdmin()) {
             return null;
         }
-        int courseCount = countCourse(courseNum);
+        //$$$not sure if i need to sync here$$$
+        int courseCount = curr.countStudents();
         String userMsg = "Course: (" + curr.getCourseNum() + ") " + curr.getCourseName() + "\n";
         userMsg = userMsg + "Seats Available: " + (curr.getMaxCourses() - courseCount) + " / " + courseCount + "\n";
-        userMsg = userMsg + "Students Registered: " + getStudents(courseNum);
+        userMsg = userMsg + "Students Registered: " + curr.getStudents();
         return userMsg;
     }
 
     //returns the stats for a student
-    public String studentStat(String userName) {
-        String userMsg = "Student: " + userName + "\n";
-        userMsg = userMsg + "Courses" + studentCourses.get(userName);
+    public String studentStat(String studentName, String userName) {
+        DB_User dbu = getUser(userName);
+        if(!dbu.isAdmin()) {
+            return null;
+        }
+        String userMsg = "Student: " + studentName + "\n";
+        userMsg = userMsg + "Courses" + dbu.getCourses();
         return userMsg;
     }
 
     //checks if a student is registered to a course
     public boolean isRegistered(int courseNum, String userName) {
-        return studentCourses.get(userName).contains(courseNum);
+        DB_User dbu = getUser(userName);
+        return dbu != null && !dbu.isAdmin() && dbu.getCourses().contains(courseNum);
     }
 
     //unregisters a student from a course return false if failed
     public boolean unRegister(int courseNum, String userName) {
-        if(!studentCourses.get(userName).contains(courseNum)) {
-            return false;
+        DB_User dbu = getUser(userName);
+        Course course = getCourseByNum(courseNum);
+        if (dbu.getCourses().contains(courseNum) && course != null && course.unRegisterFromCourse(dbu)){
+            return true;
         }
-        studentCourses.get(userName).remove(courseNum);
-        return true;
+        return false;
     }
 
     //returns all the courses a student attends
     public String myCourses(String userName){
-        return studentCourses.get(userName).toString();
-    }
-
-    //check if a student can register to a course
-    private boolean canRegisterToCourse(int courseNum, String userName) {
-        boolean ans = true;
-        Course curr = getCourseByNum(courseNum);
-        //checks if there is such course
-        ans = ans && getCourseByNum(courseNum) != null;
-        //checks if student is not already registered
-        ans = ans && !studentCourses.get(userName).contains(getCourseByNum(courseNum));
-        //check if course has an open seat
-        ans = ans && (countCourse(courseNum) < curr.getMaxCourses());
-        //check if the student has all the kdam courses
-        for (int i : curr.getKdamCourses()) {
-            ans = ans && studentCourses.get(userName).contains(i);
+        DB_User dbu = getUser(userName);
+        if(dbu.isAdmin()) {
+            return null;
         }
-        return ans;
+        return dbu.getCourses().toString();
     }
 
     //returns a course with courseNum as his number - null if no such course
@@ -221,26 +212,12 @@ public class Database {
         return null;
     }
 
-    //counts the number of students that attend this course
-    private int countCourse(int courseNum) {
-        int counter = 0;
-        for (String user : users.keySet()) {
-            if(studentCourses.get(user).contains(courseNum)) {
-                counter ++;
+    private DB_User getUser(String userName) {
+        for (DB_User dbu : users) {
+            if (dbu.getUserName() == userName) {
+                return dbu;
             }
         }
-        return counter;
-    }
-
-    //returns a list of student who are registered to a course
-    private List<String> getStudents(int courseNum) {
-        List<String> ans = new LinkedList<>();
-        for (String user : users.keySet()) {
-            if(studentCourses.get(user).contains(courseNum)) {
-                ans.add(user);
-            }
-        }
-        Collections.sort(ans);
-        return ans;
+        return null;
     }
 }

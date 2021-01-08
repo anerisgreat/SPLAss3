@@ -11,6 +11,10 @@ public class StudentStat extends absMsg{
 
     @Override
     public Message process(User user) {
-        return new Ack(getOpCode(), getDb().studentStat(studentName));
+        String ans = getDb().studentStat(studentName, user.getUserName());
+        if (ans == null) {
+            return new Err(getOpCode());
+        }
+        return new Ack(getOpCode(), ans);
     }
 }
