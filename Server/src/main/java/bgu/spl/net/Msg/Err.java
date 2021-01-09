@@ -8,6 +8,8 @@ public class Err extends absMsg {
         this.msgOpCode = msgOpCode;
     }
 
+    public short getOpCode(){ return msgOpCode; }
+
     //TODO: Remove
     @Override
     public Message process(User user) {

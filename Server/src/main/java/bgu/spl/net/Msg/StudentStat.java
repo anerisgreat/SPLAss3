@@ -1,9 +1,7 @@
 package bgu.spl.net.Msg;
 
-import bgu.spl.net.srv.User;
-
-public class StudentStat extends absMsg{
-    private String studentName;
+public class StudentStat implements CtoSMessage{
+    public String studentName;
     public  StudentStat(String studentName) {
         this.studentName = studentName;
     }

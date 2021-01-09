@@ -1,8 +1,6 @@
 package bgu.spl.net.Msg;
 
-import bgu.spl.net.srv.User;
-
-public class Login extends absMsg implements CtoSMessage{
+public class Login implements CtoSMessage{
     private String userName;
     private String password;
 
@@ -14,6 +12,7 @@ public class Login extends absMsg implements CtoSMessage{
     public String getUserName(){ return userName; }
     public String getPassword(){ return password; }
     
+    //TODO: Remove
     @Override
     public Message process(User user) {
         if(user.getLoggedIn()) {

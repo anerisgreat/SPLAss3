@@ -1,15 +1,16 @@
 package bgu.spl.net.Msg;
 
-import bgu.spl.net.srv.User;
-
-public class Ack extends absMsg{
+public class Ack implements CtoSMessage{
     private String print;
-    public Ack(String print) {
-        super();
+    private short opCode;
+
+    public Ack(short msgOpCode, String print) {
         this.print = print;
+        this.opCode = msgOpCode;
     }
 
     public String getPrint(){return this.print; }
+    public short getOpCode(){ return this.opCode; }
 
     //TODO: Remove
     @Override

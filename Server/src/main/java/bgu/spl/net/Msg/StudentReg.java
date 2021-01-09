@@ -1,10 +1,9 @@
 package bgu.spl.net.Msg;
 
-import bgu.spl.net.srv.User;
-
-public class StudentReg extends absMsg implements CtoSMessage{
+public class StudentReg implements CtoSMessage{
     private String userName;
     private String password;
+
     public StudentReg(String userName, String password) {
         this.userName = userName;
         this.password = password;

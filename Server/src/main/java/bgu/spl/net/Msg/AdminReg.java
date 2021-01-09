@@ -1,10 +1,6 @@
 package bgu.spl.net.Msg;
 
-import bgu.spl.net.Db.Database;
-import bgu.spl.net.api.MessagingProtocol;
-import bgu.spl.net.srv.User;
-
-public class AdminReg extends absMsg{
+public class AdminReg implements CtoSMessage{
     private String userName;
     private String password;
 
