@@ -70,3 +70,6 @@ fabric.properties
 *.iml
 
 *.json
+
+*.o
+BGRSClient
