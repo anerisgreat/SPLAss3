@@ -1,8 +1,9 @@
 package bgu.spl.net.Msg;
 
+import bgu.spl.net.srv.MsgProtocol;
 import bgu.spl.net.srv.User;
 
-public class Err extends absMsg {
+public class Err implements StoCMessage {
     private short msgOpCode;
     public Err(short msgOpCode) {
         this.msgOpCode = msgOpCode;
@@ -10,9 +11,8 @@ public class Err extends absMsg {
 
     public short getOpCode(){ return msgOpCode; }
 
-    //TODO: Remove
     @Override
-    public Message process(User user) {
+    public Message visit(MsgProtocol msgProtocol) {
         return null;
     }
 }

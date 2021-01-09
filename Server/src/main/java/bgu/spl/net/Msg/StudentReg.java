@@ -1,5 +1,7 @@
 package bgu.spl.net.Msg;
 
+import bgu.spl.net.srv.MsgProtocol;
+
 public class StudentReg implements CtoSMessage{
     private String userName;
     private String password;
@@ -12,12 +14,9 @@ public class StudentReg implements CtoSMessage{
     public String getUserName(){ return userName; }
     public String getPassword(){ return password; }
 
-    //TODO: Remove
+
     @Override
-    public Message process(User user) {
-        if (getDb().studentReg(userName, password)) {
-            return new Ack(getOpCode(),"");
-        }
-        return new Err(getOpCode());
+    public Message visit(MsgProtocol msgProtocol) {
+        return msgProtocol.visit(this);
     }
 }

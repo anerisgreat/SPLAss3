@@ -1,6 +1,9 @@
 package bgu.spl.net.Msg;
 
-public class Ack implements CtoSMessage{
+import bgu.spl.net.srv.MsgProtocol;
+import bgu.spl.net.srv.User;
+
+public class Ack implements StoCMessage{
     private String print;
     private short opCode;
 
@@ -12,9 +15,8 @@ public class Ack implements CtoSMessage{
     public String getPrint(){return this.print; }
     public short getOpCode(){ return this.opCode; }
 
-    //TODO: Remove
     @Override
-    public Message process(User user) {
+    public Message visit(MsgProtocol msgProtocol) {
         return null;
     }
 }

@@ -1,21 +1,19 @@
 package bgu.spl.net.Msg;
 
+import bgu.spl.net.srv.MsgProtocol;
 import bgu.spl.net.srv.User;
 
-public class IsRegistered extends absMsg{
+public class IsRegistered implements CtoSMessage{
     private short courseNum;
     public IsRegistered(short courseNum) {
+        super();
         this.courseNum = courseNum;
     }
 
     public short getCourseNum(){ return courseNum; }
 
-    //TODO: Remove
     @Override
-    public Message process(User user) {
-        if(getDb().isRegistered(courseNum, user.getUserName())) {
-            return new Ack(getOpCode(), "REGISTERED");
-        }
-        return new Ack(getOpCode(), "NOT REGISTERED");
+    public Message visit(MsgProtocol msgProtocol) {
+        return msgProtocol.visit(this);
     }
 }

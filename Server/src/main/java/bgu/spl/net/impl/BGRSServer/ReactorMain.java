@@ -3,6 +3,7 @@ package bgu.spl.net.impl.BGRSServer;
 import bgu.spl.net.Msg.Message;
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.srv.EventEncoderDecoder;
 import bgu.spl.net.srv.MsgProtocol;
 import bgu.spl.net.srv.Reactor;
 
@@ -12,7 +13,7 @@ public class ReactorMain {
     public static void main(String[] args) {
 
         Supplier<MessagingProtocol<Message>>  protocolSupplier = MsgProtocol::new;
-        Supplier<MessageEncoderDecoder<Message>>  encoderDecoderSupplier = MsgEncoderDecoder::new;
+        Supplier<MessageEncoderDecoder<Message>>  encoderDecoderSupplier = EventEncoderDecoder::new;
         if(args.length < 2) {
             throw new IllegalArgumentException("illegal argument");
         }

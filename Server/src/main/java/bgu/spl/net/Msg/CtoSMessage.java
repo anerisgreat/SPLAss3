@@ -1,5 +1,7 @@
 package bgu.spl.net.Msg;
 
-public interface CtoSMessage {
+import bgu.spl.net.srv.MsgProtocol;
+
+public interface CtoSMessage extends Message{
 
 }

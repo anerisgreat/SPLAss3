@@ -1,4 +1,4 @@
 package bgu.spl.net.Msg;
 
-public interface StoCMessage{
+public interface StoCMessage extends Message{
 }

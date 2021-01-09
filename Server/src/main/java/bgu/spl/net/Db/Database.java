@@ -91,7 +91,7 @@ public class Database {
         return new Course(courseNum, courseName, kdamCourses, maxCourses);
     }
     //registers an admin to system return false if failed
-    public boolean adminReg(String userName, String password) {
+    public boolean registerAdmin(String userName, String password) {
         synchronized (users) {
             if (getUser(userName) != null) {
                 return false;
@@ -104,7 +104,7 @@ public class Database {
     }
 
     //registers a student to the system return false if failed
-    public boolean studentReg(String userName, String password) {
+    public boolean registerStudent(String userName, String password) {
         synchronized (users) {
             if (getUser(userName) != null) {
                 return false;
@@ -133,7 +133,7 @@ public class Database {
 
 
     //register a student to a course
-    public boolean CourseReg(int courseNum, String userName) {
+    public boolean registerToCourse(int courseNum, String userName) {
         DB_User dbu = getUser(userName);
         Course course = getCourseByNum(courseNum);
         if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
@@ -143,17 +143,17 @@ public class Database {
     }
 
     //returns the list of kdam courses for a course
-    public String kdamCheck(int courseNum) {
+    public List<Integer> getKdam(int courseNum) {
         if(!courses.contains(getCourseByNum(courseNum))){
             return null;
         }
         else{
-            return getCourseByNum(courseNum).getKdamCourses().toString();
+            return getCourseByNum(courseNum).getKdamCourses();
         }
     }
 
     //return the stats for a course
-    public String courseStat(int courseNum, String userName) {
+    public String getCourseStats(int courseNum, String userName) {
         Course curr = getCourseByNum(courseNum);
         if (!courses.contains(curr) || !getUser(userName).isAdmin()) {
             return null;
@@ -166,19 +166,8 @@ public class Database {
         return userMsg;
     }
 
-    //returns the stats for a student
-    public String studentStat(String studentName, String userName) {
-        DB_User dbu = getUser(userName);
-        if(!dbu.isAdmin()) {
-            return null;
-        }
-        String userMsg = "Student: " + studentName + "\n";
-        userMsg = userMsg + "Courses" + dbu.getCourses();
-        return userMsg;
-    }
-
     //checks if a student is registered to a course
-    public boolean isRegistered(int courseNum, String userName) {
+    public boolean isRegisteredToCourse(int courseNum, String userName) {
         DB_User dbu = getUser(userName);
         return dbu != null && !dbu.isAdmin() && dbu.getCourses().contains(courseNum);
     }
@@ -194,12 +183,12 @@ public class Database {
     }
 
     //returns all the courses a student attends
-    public String myCourses(String userName){
+    public List<Integer> getCourses(String userName){
         DB_User dbu = getUser(userName);
         if(dbu.isAdmin()) {
             return null;
         }
-        return dbu.getCourses().toString();
+        return dbu.getCourses();
     }
 
     //returns a course with courseNum as his number - null if no such course
@@ -219,5 +208,9 @@ public class Database {
             }
         }
         return null;
+    }
+
+    public boolean isAdmin(String userName) {
+        return getUser(userName).isAdmin();
     }
 }

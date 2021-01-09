@@ -1,8 +1,9 @@
 package bgu.spl.net.Msg;
 
+import bgu.spl.net.srv.MsgProtocol;
 import bgu.spl.net.srv.User;
 
-public class CourseStat extends absMsg{
+public class CourseStat implements CtoSMessage{
     private short courseNum;
     public CourseStat(short courseNum) {
         this.courseNum = courseNum;
@@ -11,11 +12,7 @@ public class CourseStat extends absMsg{
     public short getCourseNum(){ return courseNum; }
 
     @Override
-    public Message process(User user) {
-        String msg = getDb().courseStat(courseNum, user.getUserName());
-        if (msg == null) {
-            return new Err(getOpCode());
-        }
-        return new Ack(getOpCode(), msg);
+    public Message visit(MsgProtocol msgProtocol) {
+        return null;
     }
 }

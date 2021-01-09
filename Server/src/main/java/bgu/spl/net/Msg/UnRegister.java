@@ -1,8 +1,9 @@
 package bgu.spl.net.Msg;
 
+import bgu.spl.net.srv.MsgProtocol;
 import bgu.spl.net.srv.User;
 
-public class UnRegister extends absMsg{
+public class UnRegister implements CtoSMessage{
     private short courseNum;
     public UnRegister(short courseNum) {
         this.courseNum = courseNum;
@@ -10,12 +11,8 @@ public class UnRegister extends absMsg{
 
     public short getCourseNum(){ return courseNum; }
 
-    //TODO: Remove
     @Override
-    public Message process(User user) {
-        if(getDb().unRegister(courseNum, user.getUserName())){
-            return new Ack(getOpCode(), "");
-        }
-        return new Err(getOpCode());
+    public Message visit(MsgProtocol msgProtocol) {
+        return null;
     }
 }
