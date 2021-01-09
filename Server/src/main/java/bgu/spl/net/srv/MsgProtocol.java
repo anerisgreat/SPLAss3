@@ -29,16 +29,20 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //Admin registration
     public Message visit(AdminReg ar) {
-        if (db.registerAdmin(ar.getUserName(), ar.getPassword())) {
-            return new Ack((short)1, "");
+        if(!user.getLoggedIn()) {
+            if (db.registerAdmin(ar.getUserName(), ar.getPassword())) {
+                return new Ack((short) 1, "");
+            }
         }
         return new Err((short)1);
     }
 
     //Student registration
     public Message visit(StudentReg sr){
-        if(db.registerStudent(sr.getUserName(),sr.getPassword())) {
-            return new Ack((short)2, "");
+        if(!user.getLoggedIn()) {
+            if (db.registerStudent(sr.getUserName(), sr.getPassword())) {
+                return new Ack((short) 2, "");
+            }
         }
         return new Err((short)2);
     }
@@ -59,6 +63,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //Logout
     public Message visit(Logout l) {
+        if (!user.getLoggedIn()) {
+            return new Err((short)4);
+        }
         db.logout(user.getUserName());
         user.setLoggedIn(false);
         user.setUserName(null);
@@ -68,6 +75,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //Course registration
     public Message visit(CourseReg cr) {
+        if (!user.getLoggedIn()) {
+            return new Err((short)5);
+        }
         if (db.registerToCourse(cr.getCourseNum(), user.getUserName())){
             return new Ack((short)5, "");
         }
@@ -76,6 +86,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //gets a list of all the kdam courses
     public Message visit(KdamCheck kc) {
+        if (!user.getLoggedIn()) {
+            return new Err((short)6);
+        }
         List<Integer> kdams = db.getKdam(kc.getCourseNum());
         if(kdams != null) {
             return new Ack((short)6, kdams.toString());
@@ -85,6 +98,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //Course Stats
     public Message visit(CourseStat cs) {
+        if (!user.getLoggedIn() || !db.isAdmin(user.getUserName())){
+            return new Err((short)7);
+        }
        String msg = db.getCourseStats(cs.getCourseNum(), user.getUserName());
         if (msg == null) {
             return new Err((short)7);
@@ -94,7 +110,7 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //Student Stats
     public Message visit(StudentStat ss){
-        if(!db.isAdmin(ss.getStudentName())) {
+        if(!user.getLoggedIn() || !db.isAdmin(user.getUserName())) {
             return new Err((short)8);
         }
         String userMsg = "Student: " + ss.getStudentName() + "\n";
@@ -105,6 +121,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //check if a student is registered to a course
     public Message visit(IsRegistered ir) {
+        if (!user.getLoggedIn()) {
+            return new Err((short)9);
+        }
         if(db.isRegisteredToCourse(ir.getCourseNum(), user.getUserName())){
             return new Ack((short)9, "REGISTERED");
         }
@@ -113,6 +132,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //UnRegister from course
     public Message visit(UnRegister ur) {
+        if (!user.getLoggedIn()) {
+            return new Err((short)10);
+        }
         if(db.unRegister(ur.getCourseNum(), user.getUserName())){
             return new Ack((short)10, "");
         }
@@ -121,6 +143,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
 
     //my Courses
     public Message visit(MyCourses mc) {
+        if (!user.getLoggedIn()) {
+            return new Err((short)11);
+        }
         List<Integer> courses = db.getCourses(user.getUserName());
         if (courses == null) {
             return new Err((short)11);
