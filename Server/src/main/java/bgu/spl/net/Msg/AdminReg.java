@@ -9,11 +9,14 @@ public class AdminReg extends absMsg{
     private String password;
 
     public AdminReg(String userName, String password) {
-        super((short) 1);
         this.userName = userName;
         this.password = password;
     }
 
+    public String getUserName(){ return userName; }
+    public String getPassword(){ return password; }
+
+    //TODO: Remove
     @Override
     public Message process(User user) {
         if (getDb().adminReg(userName, password)) {

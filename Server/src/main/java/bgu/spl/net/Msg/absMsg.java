@@ -2,25 +2,22 @@ package bgu.spl.net.Msg;
 
 import bgu.spl.net.Db.Database;
 
+//TODO: Remove
 public abstract class absMsg implements Message{
-    private short msgOpCode;
+    //Being that we will be removing all the functionality of this class, we must remove it entirely.
     private Database db;
 
-    public absMsg(short msgOpCode) {
-        this.msgOpCode = msgOpCode;
+    public absMsg() {
+        //TODO: Remove
         db = Database.getInstance();
     }
     public absMsg() {
-        msgOpCode = 0;
+        //TODO: Remove
         db = Database.getInstance();
     }
 
+    //TODO: Remove
     public Database getDb() {
         return db;
-    }
-
-    @Override
-    public short getOpCode() {
-        return msgOpCode;
     }
 }

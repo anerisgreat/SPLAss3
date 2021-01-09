@@ -5,10 +5,12 @@ import bgu.spl.net.srv.User;
 public class KdamCheck extends absMsg{
     private short courseNum;
     public  KdamCheck(short courseNum) {
-        super((short)6);
         this.courseNum = courseNum;
     }
 
+    public short getCourseNum(){ return courseNum; }
+
+    //TODO: Remove
     @Override
     public Message process(User user) {
         String msg = getDb().kdamCheck(courseNum);

@@ -5,9 +5,10 @@ import bgu.spl.net.srv.User;
 public class CourseStat extends absMsg{
     private short courseNum;
     public CourseStat(short courseNum) {
-        super((short)7);
         this.courseNum = courseNum;
     }
+
+    public short getCourseNum(){ return courseNum; }
 
     @Override
     public Message process(User user) {

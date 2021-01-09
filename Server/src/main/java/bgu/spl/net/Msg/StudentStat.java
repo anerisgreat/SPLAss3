@@ -5,10 +5,12 @@ import bgu.spl.net.srv.User;
 public class StudentStat extends absMsg{
     private String studentName;
     public  StudentStat(String studentName) {
-        super((short)8);
         this.studentName = studentName;
     }
 
+    public String getStudentName(){ return studentName; }
+
+    //TODO: Remove
     @Override
     public Message process(User user) {
         String ans = getDb().studentStat(studentName, user.getUserName());

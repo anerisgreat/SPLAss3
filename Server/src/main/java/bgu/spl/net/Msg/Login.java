@@ -5,12 +5,15 @@ import bgu.spl.net.srv.User;
 public class Login extends absMsg implements CtoSMessage{
     private String userName;
     private String password;
+
     public Login(String userName, String password) {
-        super((short)3);
         this.userName = userName;
         this.password = password;
     }
 
+    public String getUserName(){ return userName; }
+    public String getPassword(){ return password; }
+    
     @Override
     public Message process(User user) {
         if(user.getLoggedIn()) {

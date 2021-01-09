@@ -5,10 +5,12 @@ import bgu.spl.net.srv.User;
 public class IsRegistered extends absMsg{
     private short courseNum;
     public IsRegistered(short courseNum) {
-        super((short)9);
         this.courseNum = courseNum;
     }
 
+    public short getCourseNum(){ return courseNum; }
+
+    //TODO: Remove
     @Override
     public Message process(User user) {
         if(getDb().isRegistered(courseNum, user.getUserName())) {

@@ -4,15 +4,14 @@ import bgu.spl.net.srv.User;
 
 public class Ack extends absMsg{
     private String print;
-    private short msgOpCode;
-    public Ack(short msgOpCode, String print) {
-        super((short)12);
-        this.msgOpCode = msgOpCode;
+    public Ack(String print) {
+        super();
         this.print = print;
     }
 
     public String getPrint(){return this.print; }
 
+    //TODO: Remove
     @Override
     public Message process(User user) {
         return null;

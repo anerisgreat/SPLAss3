@@ -3,10 +3,9 @@ package bgu.spl.net.Msg;
 import bgu.spl.net.srv.User;
 
 public class MyCourses extends absMsg{
-    public MyCourses() {
-        super((short)11);
-    }
+    public MyCourses() {}
 
+    //TODO: Remove
     @Override
     public Message process(User user) {
         String ans = getDb().myCourses(user.getUserName());
