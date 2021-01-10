@@ -31,7 +31,7 @@ public class Database {
     private Database() {
         courses = new LinkedList<>();
         users = new LinkedList<>();
-        initialize("src/main/Courses.txt");
+        initialize("Courses.txt");
     }
 
 
@@ -88,7 +88,7 @@ public class Database {
         }
 
         maxCourses = Integer.parseInt(curr[3]);
-        if (courseNum < 0 || courseName.length() == 0 || maxCourses <= 5) {
+        if (courseNum < 0 || courseName.length() == 0 || maxCourses < 5) {
             throw new Exception("illegal course parameters");
         }
         return new Course(courseNum, courseName, kdamCourses, maxCourses);
@@ -139,7 +139,8 @@ public class Database {
     public boolean registerToCourse(int courseNum, String userName) {
         DB_User dbu = getUser(userName);
         Course course = getCourseByNum(courseNum);
-        if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
+        //if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
+        if (course != null && course.registerToCourse(dbu)){
             return true;
         }
         return false;
@@ -156,9 +157,14 @@ public class Database {
     }
 
     //return the stats for a course
-    public String getCourseStats(int courseNum, String userName) {
+    public String getCourseStats(int courseNum) {
         Course curr = getCourseByNum(courseNum);
-        if (!courses.contains(curr) || !getUser(userName).isAdmin()) {
+        if (!courses.contains(curr)) {
+            System.out.println("It goes in here.");
+            for(Course c : courses) {
+                System.out.println(c.getCourseNum());
+            }
+
             return null;
         }
         //$$$not sure if i need to sync here$$$

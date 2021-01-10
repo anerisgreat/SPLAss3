@@ -32,16 +32,15 @@ public class CommandProcessor {
     public String sendCommand(String command) {
         String response = "";
         try {
-            System.out.println("About to send command.");
+            /*
             do{
                 Thread.sleep(100);
             }while(!consoleReader.isReadyToWrite());
-            System.out.println("Finished waiting.");
+            */
 
             consoleWriter.write(command);
             consoleWriter.write("\n");
             consoleWriter.flush();
-            System.out.println("Finished sending actually.");
 
             Thread.sleep(200);
 

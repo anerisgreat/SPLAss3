@@ -36,21 +36,16 @@ public class Tests implements Runnable {
                 int tempI = i;
                 new Thread(() -> {
                     try {
-                        System.out.println("ADDING");
                         outputs.add(commandsProcessors.get(tempI).sendCommand("STUDENTREG RON RON"));
-                        System.out.println("ADDED");
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
                         commandsProcessors.get(tempI).kill();
                         threadsEnded.countDown();
-                        System.out.println("I COUNTED DOWN YOU FUCK");
                     }
                 }).start();
             }
-            System.out.println("Let's say we did this... Or something.");
             threadsEnded.await();
-            System.out.println("And then we... Continued?");
             int numTimesSuccess = 0;
             for (String s : outputs) {
                 if (s.equals("ACK 2"))
@@ -231,6 +226,7 @@ public class Tests implements Runnable {
             threadsEnded.await();
             int numTimesSuccess = 0;
             for (String s : outputs) {
+                System.out.println(s);
                 if (s.equals("ACK 2") || s.equals("ACK 6") || s.equals("ACK 5") || s.equals("ACK 10") || s.equals("ACK 9")) { //STUDENT REG SHALL FAIL SINCE WE ALREADY LOGGED
                     response = ("STUDENTREG Command Works For Admin | Invalid Behaviour....");
                     numTimesSuccess++;
@@ -451,7 +447,7 @@ public class Tests implements Runnable {
         CommandProcessor commandProcessorOfAdmin=new CommandProcessor();
         commandProcessorOfAdmin.initialize();
         commandProcessorOfAdmin.sendCommand("LOGIN A A");
-        String output     = commandProcessorOfAdmin.sendCommand("COURSESTAT "+p.getCourseNum());
+        String output = commandProcessorOfAdmin.sendCommand("COURSESTAT "+p.getCourseNum());
         String [] tokens  = output.split("\n");
         String ack        = tokens[0];
         String courseName = tokens[1];
@@ -647,7 +643,6 @@ public class Tests implements Runnable {
             courses = nonShuffledCourseList;
             ArrayList<String> coursesLines = new ArrayList<>();
             for (Course course : courses) {
-                System.out.println(course.toString());
                 coursesLines.add(course.toString());
             }
             Files.write(Paths.get("./Courses.txt"), coursesLines, Charset.defaultCharset());

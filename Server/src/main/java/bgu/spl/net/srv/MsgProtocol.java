@@ -76,11 +76,14 @@ public class MsgProtocol implements MessagingProtocol<Message> {
     //Course registration
     public Message visit(CourseReg cr) {
         if (!user.getLoggedIn()) {
+            System.out.println("CourseReg failed becaus user not logged in!");
             return new Err((short)5);
         }
         if (db.registerToCourse(cr.getCourseNum(), user.getUserName())){
+            System.out.println("CourseReg succeeded!");
             return new Ack((short)5, "");
         }
+        System.out.println("CourseReg totally bombed!");
         return new Err((short)5);
     }
 
@@ -101,8 +104,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
         if (!user.getLoggedIn() || !db.isAdmin(user.getUserName())){
             return new Err((short)7);
         }
-       String msg = db.getCourseStats(cs.getCourseNum(), user.getUserName());
+       String msg = db.getCourseStats(cs.getCourseNum());
         if (msg == null) {
+            System.out.println("It's because DB isn't 'playing ball'");
             return new Err((short)7);
         }
         return new Ack((short)7, msg);
