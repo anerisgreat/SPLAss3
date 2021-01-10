@@ -138,10 +138,12 @@ public class Database {
     //register a student to a course
     public boolean registerToCourse(int courseNum, String userName) {
         DB_User dbu = getUser(userName);
-        Course course = getCourseByNum(courseNum);
-        //if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
-        if (course != null && course.registerToCourse(dbu)){
-            return true;
+        if(!dbu.isAdmin()) {
+            Course course = getCourseByNum(courseNum);
+            //if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
+            if (course != null && course.registerToCourse(dbu)) {
+                return true;
+            }
         }
         return false;
     }
