@@ -29,9 +29,9 @@ public class Database {
 
     //to prevent user from creating new Database
     private Database() {
-        courses = new LinkedList<>();
-        users = new LinkedList<>();
-        initialize("Courses.txt");
+        courses = Collections.synchronizedList(new LinkedList<>());
+        users = Collections.synchronizedList(new LinkedList<>());
+        initialize("src/main/Courses.txt");
     }
 
 
@@ -138,10 +138,12 @@ public class Database {
     //register a student to a course
     public boolean registerToCourse(int courseNum, String userName) {
         DB_User dbu = getUser(userName);
-        Course course = getCourseByNum(courseNum);
-        //if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
-        if (course != null && course.registerToCourse(dbu)){
-            return true;
+        if(!dbu.isAdmin()) {
+            Course course = getCourseByNum(courseNum);
+            //if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
+            if (course != null && course.registerToCourse(dbu)) {
+                return true;
+            }
         }
         return false;
     }
@@ -168,10 +170,14 @@ public class Database {
             return null;
         }
         //$$$not sure if i need to sync here$$$
+        List<String> students = curr.getStudents();
+        Collections.sort(students);
+        String s = students.toString();
+        s = s.replaceAll(" ", "");
         int courseCount = curr.countStudents();
         String userMsg = "Course: (" + curr.getCourseNum() + ") " + curr.getCourseName() + "\n";
         userMsg = userMsg + "Seats Available: " + (curr.getMaxCourses() - courseCount) + "/" + curr.getMaxCourses() + "\n";
-        userMsg = userMsg + "Students Registered: " + curr.getStudents();
+        userMsg = userMsg + "Students Registered: " + s;
         return userMsg;
     }
 

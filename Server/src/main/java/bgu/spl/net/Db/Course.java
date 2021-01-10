@@ -1,5 +1,6 @@
 package bgu.spl.net.Db;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Course {
         this.courseName = courseName;
         this.kdamCourses = kdamCourses;
         this.maxCourses = maxCourses;
-        studentsAttend = new LinkedList<>();
+        studentsAttend = Collections.synchronizedList(new LinkedList<>());
     }
 
     public int getCourseNum() {
@@ -61,7 +62,7 @@ public class Course {
         return studentsAttend.size();
     }
 
-    public String getStudents() {
-        return studentsAttend.toString();
+    public List<String> getStudents() {
+        return studentsAttend;
     }
 }

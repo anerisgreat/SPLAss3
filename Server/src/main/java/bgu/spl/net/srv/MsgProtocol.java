@@ -94,7 +94,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
         }
         List<Integer> kdams = db.getKdam(kc.getCourseNum());
         if(kdams != null) {
-            return new Ack((short)6, kdams.toString());
+            String s = kdams.toString();
+            s = s.replaceAll(" ", "");
+            return new Ack((short)6, s);
         }
         return new Err((short)6);
     }
