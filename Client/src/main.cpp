@@ -20,6 +20,7 @@ void inThread(ConnectionHandler& connectionHandler){
 }
 
 int main (int argc, char *argv[]) {
+    std::cout << "Started client!" << std::endl;
     if (argc < 3) {
         std::cerr << "Usage: " << argv[0] << " host port" << std::endl << std::endl;
         return -1;

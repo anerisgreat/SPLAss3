@@ -9,6 +9,6 @@ public class Logout implements CtoSMessage{
 
     @Override
     public Message visit(MsgProtocol msgProtocol) {
-        return null;
+        return msgProtocol.visit(this);
     }
 }
