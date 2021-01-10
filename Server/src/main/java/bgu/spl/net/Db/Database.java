@@ -31,6 +31,7 @@ public class Database {
     private Database() {
         courses = new LinkedList<>();
         users = new LinkedList<>();
+        initialize("src/main/Courses.txt");
     }
 
 
@@ -80,7 +81,10 @@ public class Database {
             if (s.endsWith("]")) {
                 s = s.substring(0,s.length() - 1);
             }
-            kdamCourses.add(Integer.parseInt(s));
+            if(s.length() <0) {
+                kdamCourses.add(Integer.parseInt(s));
+            }
+
         }
 
         maxCourses = Integer.parseInt(curr[3]);
