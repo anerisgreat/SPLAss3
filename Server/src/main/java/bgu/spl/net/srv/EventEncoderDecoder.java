@@ -32,27 +32,27 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<Message> {
         private short currEncoderIndex;
 
         public EncoderHelper(){
-            encoderBuff = new byte[128];
+            this.encoderBuff = new byte[1024];
             currEncoderIndex = 0;
         }
 
-        public void encode(Short p_short){
-            encoderBuff[currEncoderIndex] = (byte)((p_short & 0xFF00) >> 8);
-            encoderBuff[currEncoderIndex + 1] = (byte)(p_short & 0xFF);
-            currEncoderIndex += 2;
+        public void encode(short p_short){
+            this.encoderBuff[this.currEncoderIndex] = (byte)((p_short & 0xFF00) / 0x100);
+            this.encoderBuff[this.currEncoderIndex + 1] = (byte)(p_short & 0xFF);
+            this.currEncoderIndex += 2;
         }
 
         public void encode(String p_string){
             for(int i = 0; i < p_string.length(); ++i){
-                encoderBuff[currEncoderIndex] = (byte)(p_string.charAt(i));
-                currEncoderIndex++;
+                this.encoderBuff[this.currEncoderIndex] = (byte)(p_string.charAt(i));
+                this.currEncoderIndex++;
             }
-            encoderBuff[currEncoderIndex] = 0;
-            currEncoderIndex++;
+            this.encoderBuff[this.currEncoderIndex] = 0;
+            this.currEncoderIndex++;
         }
 
         public byte[] getArr(){
-            return Arrays.copyOfRange(encoderBuff, 0, currEncoderIndex);
+            return Arrays.copyOfRange(this.encoderBuff, 0, this.currEncoderIndex);
         }
     }
 
@@ -179,66 +179,71 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<Message> {
                 this.fieldIndex = 0;
             }
         }
-        //Finished receiving short.
-        else if((this.opCodeToEventType.get(this.currentOpCode).Fields[this.fieldIndex] == fieldType.shortfield)
-                && (this.indexInField == 2))
-        {
-            this.shortValQueue.add(byteArrAtIndexToShort(this.byteArr, this.fieldStartIndex));
-            
-            //Prepare field start for next field.
-            this.fieldIndex++;
-            this.indexInField = 0;
-            this.fieldStartIndex = this.buffIndex;
-        }
-        //Finished receiving string
-        else if((this.opCodeToEventType.get(this.currentOpCode).Fields[this.fieldIndex] == fieldType.stringfield)
-                && (nextByte == 0))
-        {
-            this.stringValQueue.add(byteArrAtIndexToString(this.byteArr,
-                                                            this.fieldStartIndex,
-                                                            this.indexInField - 1));
-            //Prepare field start for next field.
-            this.fieldIndex++;
-            this.indexInField = 0;
-            this.fieldStartIndex = this.buffIndex;
-        }
+        else if(this.fieldIndex >= 0){
+            //Finished receiving short.
+            if((this.opCodeToEventType.get(this.currentOpCode).Fields[this.fieldIndex] ==
+                     fieldType.shortfield)
+                    && (this.indexInField == 2))
+            {
+                this.shortValQueue.add(byteArrAtIndexToShort(this.byteArr, this.fieldStartIndex));
 
-        //Received last field. Time to construct message.
-        if(this.fieldIndex == this.opCodeToEventType.get(this.currentOpCode).Fields.length){
-            this.fieldIndex = -1;
-            this.buffIndex = 0;
+                //Prepare field start for next field.
+                this.fieldIndex++;
+                this.indexInField = 0;
+                this.fieldStartIndex = this.buffIndex;
+            }
+            //Finished receiving string
+            else if((this.opCodeToEventType.get(this.currentOpCode).Fields[this.fieldIndex] ==
+                     fieldType.stringfield)
+                    && (nextByte == 0))
+            {
+                this.stringValQueue.add(byteArrAtIndexToString(this.byteArr,
+                                                                this.fieldStartIndex,
+                                                                this.indexInField - 1));
 
-            String str1 = "";
-            String str2 = "";
-            Short shr1 = -1;
-            Short shr2 = -1;
+                //Prepare field start for next field.
+                this.fieldIndex++;
+                this.indexInField = 0;
+                this.fieldStartIndex = this.buffIndex;
+            }
 
-            //Retrieving from queues
-            if(stringValQueue.peek() != null)
-                str1 = stringValQueue.poll();
-            if(stringValQueue.peek() != null)
-                str2 = stringValQueue.poll();
-            if(shortValQueue.peek() != null)
-                shr1 = shortValQueue.poll();
-            if(shortValQueue.peek() != null)
-                shr2 = shortValQueue.poll();
+            //Received last field. Time to construct message.
+            if(this.fieldIndex == this.opCodeToEventType.get(this.currentOpCode).Fields.length){
+                this.fieldIndex = -1;
+                this.buffIndex = 0;
 
-            //Creating instance
-            switch(this.currentOpCode){
-            case 1: ret = new AdminReg(str1, str2); break;
-            case 2: ret = new StudentReg(str1, str2); break;
-            case 3: ret = new Login(str1, str2); break;
-            case 4: ret = new Logout(); break;
-            case 5: ret = new CourseReg(shr1); break;
-            case 6: ret = new KdamCheck(shr1); break;
-            case 7: ret = new CourseStat(shr1); break;
-            case 8: ret = new StudentStat(str1); break;
-            case 9: ret = new IsRegistered(shr1); break;
-            case 10: ret = new UnRegister(shr1); break;
-            case 11: ret = new MyCourses(); break;
-            case 12: ret = new Ack(shr1, str1); break;
-            case 13: ret = new Err(shr1); break;
-            default: ret = new Err((short)-1); break;
+                String str1 = "";
+                String str2 = "";
+                Short shr1 = -1;
+                Short shr2 = -1;
+
+                //Retrieving from queues
+                if(stringValQueue.peek() != null)
+                    str1 = stringValQueue.poll();
+                if(stringValQueue.peek() != null)
+                    str2 = stringValQueue.poll();
+                if(shortValQueue.peek() != null)
+                    shr1 = shortValQueue.poll();
+                if(shortValQueue.peek() != null)
+                    shr2 = shortValQueue.poll();
+
+                //Creating instance
+                switch(this.currentOpCode){
+                case 1: ret = new AdminReg(str1, str2); break;
+                case 2: ret = new StudentReg(str1, str2); break;
+                case 3: ret = new Login(str1, str2); break;
+                case 4: ret = new Logout(); break;
+                case 5: ret = new CourseReg(shr1); break;
+                case 6: ret = new KdamCheck(shr1); break;
+                case 7: ret = new CourseStat(shr1); break;
+                case 8: ret = new StudentStat(str1); break;
+                case 9: ret = new IsRegistered(shr1); break;
+                case 10: ret = new UnRegister(shr1); break;
+                case 11: ret = new MyCourses(); break;
+                case 12: ret = new Ack(shr1, str1); break;
+                case 13: ret = new Err(shr1); break;
+                default: ret = new Err((short)-1); break;
+                }
             }
         }
         
@@ -248,7 +253,7 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<Message> {
     @Override
     public byte[] encode(Message message) {
         EncoderHelper h = new EncoderHelper();
-        h.encode(eventTypeToOpCode.get(h.getClass()));
+        h.encode(eventTypeToOpCode.get(message.getClass()));
 
         if(message instanceof AdminReg){
             AdminReg m = (AdminReg)message;

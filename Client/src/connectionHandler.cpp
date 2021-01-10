@@ -16,7 +16,6 @@ ConnectionHandler::~ConnectionHandler() {
 }
  
 bool ConnectionHandler::connect() {
-    std::cout << "Starting connect to " 
         << host_ << ":" << port_ << std::endl;
     try {
 		tcp::endpoint endpoint(boost::asio::ip::address::from_string(host_), port_); // the server endpoint
@@ -73,21 +72,21 @@ bool ConnectionHandler::getMessage(bool& ack, short& opcode, std::string& messag
     //Getting message opcode
     if(!getBytes(&b, 1))
         return false;
-    recOpCode = 0x100 * (short)b;
+    recOpCode = (short)(0x100 * (short)b);
     if(!getBytes(&b, 1))
         return false;
-    recOpCode += (short)b * 0xFF;
+    recOpCode += (short)(b & 0xFF);
 
     //Getting embedded opcode
     if(!getBytes(&b, 1))
         return false;
-    opcode = 0x100 * (short)b;
+    opcode = (short)(0x100 * (short)b);
     if(!getBytes(&b, 1))
         return false;
-    opcode += (short)b * 0xFF;
+    opcode += (short)(b & 0xFF);
 
     //If receiving ACK
-    if(recOpCode){
+    if(recOpCode == 12){
         ack = true;
         bool flag = true;
         while(flag){
@@ -117,7 +116,9 @@ bool ConnectionHandler::sendMessage(std::string userInput){
 
     size_t pos = 0;
     std::string substr;
-    while((pos = userInput.find(" ")) != std::string::npos){
+    bool continueFlag = true;
+    while(continueFlag){
+        continueFlag = (pos = userInput.find(" ")) != std::string::npos;
         substr = userInput.substr(0, pos);
 
         //Encoding opcode

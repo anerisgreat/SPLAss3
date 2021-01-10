@@ -53,15 +53,17 @@ int main (int argc, char *argv[]) {
             std::cout << "ACK " << opcode;
         }
         else{
-            std::cout << "NACK " << opcode;
+            std::cout << "ERR " << opcode;
         }
 
         if(ack)
             std::cout << " " << message;
 
+        std::cout << std::endl;
+
         if(ack && opcode == 4)
             flag = false;
     }
 
-    return 0;
+    exit(0);
 }
