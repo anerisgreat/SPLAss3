@@ -58,7 +58,7 @@ int main (int argc, char *argv[]) {
         }
 
         if(ack)
-            std::cout << " " << message;
+            std::cout << std::endl << message;
 
         std::cout << std::endl;
 
