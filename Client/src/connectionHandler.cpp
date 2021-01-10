@@ -16,7 +16,6 @@ ConnectionHandler::~ConnectionHandler() {
 }
  
 bool ConnectionHandler::connect() {
-        << host_ << ":" << port_ << std::endl;
     try {
 		tcp::endpoint endpoint(boost::asio::ip::address::from_string(host_), port_); // the server endpoint
 		boost::system::error_code error;
@@ -161,6 +160,7 @@ bool ConnectionHandler::sendMessage(std::string userInput){
         fieldIndex += 1;
     }
 
+    std::cout << "Sending: " << indexInArr << " bytes." << std::endl;
     return sendBytes(arrToSend, indexInArr);
 }
  
