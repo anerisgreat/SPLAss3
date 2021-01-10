@@ -135,7 +135,8 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<Message> {
     private Queue<Short> shortValQueue;
 
     private static short byteArrAtIndexToShort(byte[] p_byteArr, int p_index){
-        return (short)(((short)p_byteArr[p_index]<<8) + (short)p_byteArr[p_index + 1]);
+        short ret =  (short)(((int)p_byteArr[p_index] * 0x100) | (int)(p_byteArr[p_index + 1] & 0xFF));
+        return ret;
     }
 
     private static String byteArrAtIndexToString(byte[] p_byteArr, int p_index, int p_len){
@@ -144,13 +145,6 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<Message> {
 
     @Override
     public Message decodeNextByte(byte nextByte) {
-        /*
-
-        this.byteArr = new byte[256];
-        this.buffIndex = 0;
-        this.fieldIndex = 0;
-        this.indexInField = 0;
-         */
 
         //Init with null. We will return this at the end.
         Message ret = null;

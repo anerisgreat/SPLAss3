@@ -165,8 +165,8 @@ bool ConnectionHandler::sendMessage(std::string userInput){
  
  
 int ConnectionHandler::encodeShort(char* buff, int index, short toEncode){
-    buff[index] = (char)((toEncode & 0xFF00) / 0x100);
-    buff[index + 1] = (char)(toEncode & 0x00FF);
+    buff[index] = (char)((toEncode & (unsigned short)0xFF00)>>8);
+    buff[index + 1] = (char)((unsigned short)toEncode & (unsigned short)0x00FF);
     return index + 2;
 }
 
