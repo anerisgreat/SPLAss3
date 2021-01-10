@@ -29,15 +29,9 @@ public class Database {
 
     //to prevent user from creating new Database
     private Database() {
-<<<<<<< HEAD
         courses = Collections.synchronizedList(new LinkedList<>());
         users = Collections.synchronizedList(new LinkedList<>());
         initialize("src/main/Courses.txt");
-=======
-        courses = new LinkedList<>();
-        users = new LinkedList<>();
-        initialize("Courses.txt");
->>>>>>> aee013f752ec62fd668021dfff3908d0ba7096b1
     }
 
 
