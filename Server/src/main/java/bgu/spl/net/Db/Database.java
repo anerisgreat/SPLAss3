@@ -118,7 +118,7 @@ public class Database {
     //tries to login return false if failed
     public boolean Login(String userName, String password) {
         DB_User dbu = getUser(userName);
-        if (dbu == null || dbu.isLoggedIn() || dbu.getPassWord() != password) {
+        if (dbu == null || dbu.isLoggedIn() || dbu.getPassWord().compareTo(password) != 0) {
             return false;
         }
         dbu.setLoggedIn(true);
@@ -202,7 +202,7 @@ public class Database {
 
     private DB_User getUser(String userName) {
         for (DB_User dbu : users) {
-            if (dbu.getUserName() == userName) {
+            if (dbu.getUserName().compareTo(userName) == 0) {
                 return dbu;
             }
         }
