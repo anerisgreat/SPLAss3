@@ -11,7 +11,7 @@ bin/main.o: src/main.cpp
 	$(CC) $(CFLAGS) -o bin/main.o src/main.cpp
 
 BGRSclient: bin/main.o bin/connectionHandler.o
-	$(CC) -o bin/BGRSClient bin/main.o bin/connectionHandler.o $(LFLAGS)
+	$(CC) -o bin/BGRSclient bin/main.o bin/connectionHandler.o $(LFLAGS)
 
 .PHONY: clean
 clean:
