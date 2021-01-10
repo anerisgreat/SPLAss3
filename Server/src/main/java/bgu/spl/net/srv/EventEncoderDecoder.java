@@ -9,7 +9,7 @@ import java.util.Arrays;
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.Msg.*;
 
-public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
+public class EventEncoderDecoder implements MessageEncoderDecoder<Message> {
 
     private enum fieldType{
         stringfield,
@@ -143,7 +143,7 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
     }
 
     @Override
-    public CtoSMessage decodeNextByte(byte nextByte) {
+    public Message decodeNextByte(byte nextByte) {
         /*
 
         this.byteArr = new byte[256];
@@ -153,7 +153,7 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
          */
 
         //Init with null. We will return this at the end.
-        CtoSMessage ret = null;
+        Message ret = null;
 
         //Copy byte into array
         this.byteArr[buffIndex] = nextByte;
@@ -246,7 +246,7 @@ public class EventEncoderDecoder implements MessageEncoderDecoder<CtoSMessage> {
     }
 
     @Override
-    public byte[] encode(CtoSMessage message) {
+    public byte[] encode(Message message) {
         EncoderHelper h = new EncoderHelper();
         h.encode(eventTypeToOpCode.get(h.getClass()));
 
