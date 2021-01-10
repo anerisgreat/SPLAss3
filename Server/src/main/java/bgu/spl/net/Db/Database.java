@@ -81,7 +81,7 @@ public class Database {
             if (s.endsWith("]")) {
                 s = s.substring(0,s.length() - 1);
             }
-            if(s.length() <0) {
+            if(s.length() > 0) {
                 kdamCourses.add(Integer.parseInt(s));
             }
 
@@ -164,7 +164,7 @@ public class Database {
         //$$$not sure if i need to sync here$$$
         int courseCount = curr.countStudents();
         String userMsg = "Course: (" + curr.getCourseNum() + ") " + curr.getCourseName() + "\n";
-        userMsg = userMsg + "Seats Available: " + (curr.getMaxCourses() - courseCount) + " / " + courseCount + "\n";
+        userMsg = userMsg + "Seats Available: " + (curr.getMaxCourses() - courseCount) + "/" + curr.getMaxCourses() + "\n";
         userMsg = userMsg + "Students Registered: " + curr.getStudents();
         return userMsg;
     }

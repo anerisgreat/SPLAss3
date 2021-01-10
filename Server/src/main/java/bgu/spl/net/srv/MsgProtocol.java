@@ -150,7 +150,9 @@ public class MsgProtocol implements MessagingProtocol<Message> {
         if (courses == null) {
             return new Err((short)11);
         }
-        return new Ack((short)11, courses.toString());
+        String cor= courses.toString();
+        cor = cor.replaceAll(" ", "");
+        return new Ack((short)11, cor);
     }
 
 }

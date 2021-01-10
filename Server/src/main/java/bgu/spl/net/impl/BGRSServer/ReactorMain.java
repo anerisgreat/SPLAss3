@@ -25,7 +25,7 @@ public class ReactorMain {
         } catch (Exception e) {
             throw new IllegalArgumentException("illegal argument");
         }
-        Reactor<Message> reactor = new Reactor<Message>(portNum, numOfThreads, protocolSupplier, encoderDecoderSupplier);
+        Reactor<Message> reactor = new Reactor<Message>( numOfThreads, portNum,  protocolSupplier, encoderDecoderSupplier);
         reactor.serve();
     }
 }

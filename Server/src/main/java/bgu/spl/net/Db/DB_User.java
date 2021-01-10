@@ -59,7 +59,11 @@ public class DB_User {
     }
 
     public void removeCourse(int courseNum) {
-        courses.remove(courseNum);
+        for (int i = 0; i < courses.size(); i++) {
+            if(courses.get(i) == courseNum) {
+                courses.remove(i);
+            }
+        }
     }
 
     public List<Integer> getCourses() {
