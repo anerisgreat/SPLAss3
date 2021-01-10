@@ -29,9 +29,15 @@ public class Database {
 
     //to prevent user from creating new Database
     private Database() {
+<<<<<<< HEAD
         courses = Collections.synchronizedList(new LinkedList<>());
         users = Collections.synchronizedList(new LinkedList<>());
         initialize("src/main/Courses.txt");
+=======
+        courses = new LinkedList<>();
+        users = new LinkedList<>();
+        initialize("Courses.txt");
+>>>>>>> aee013f752ec62fd668021dfff3908d0ba7096b1
     }
 
 
@@ -88,7 +94,7 @@ public class Database {
         }
 
         maxCourses = Integer.parseInt(curr[3]);
-        if (courseNum < 0 || courseName.length() == 0 || maxCourses <= 5) {
+        if (courseNum < 0 || courseName.length() == 0 || maxCourses < 5) {
             throw new Exception("illegal course parameters");
         }
         return new Course(courseNum, courseName, kdamCourses, maxCourses);
@@ -139,7 +145,8 @@ public class Database {
     public boolean registerToCourse(int courseNum, String userName) {
         DB_User dbu = getUser(userName);
         Course course = getCourseByNum(courseNum);
-        if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
+        //if (!dbu.getCourses().contains(courseNum) && course != null && course.registerToCourse(dbu)){
+        if (course != null && course.registerToCourse(dbu)){
             return true;
         }
         return false;
@@ -156,9 +163,14 @@ public class Database {
     }
 
     //return the stats for a course
-    public String getCourseStats(int courseNum, String userName) {
+    public String getCourseStats(int courseNum) {
         Course curr = getCourseByNum(courseNum);
-        if (!courses.contains(curr) || !getUser(userName).isAdmin()) {
+        if (!courses.contains(curr)) {
+            System.out.println("It goes in here.");
+            for(Course c : courses) {
+                System.out.println(c.getCourseNum());
+            }
+
             return null;
         }
         //$$$not sure if i need to sync here$$$

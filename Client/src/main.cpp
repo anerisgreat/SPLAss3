@@ -57,7 +57,7 @@ int main (int argc, char *argv[]) {
             std::cout << "ERR " << opcode;
         }
 
-        if(ack)
+        if(ack && message != "")
             std::cout << std::endl << message;
 
         std::cout << std::endl;
