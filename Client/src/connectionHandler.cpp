@@ -160,7 +160,6 @@ bool ConnectionHandler::sendMessage(std::string userInput){
         fieldIndex += 1;
     }
 
-    std::cout << "Sending: " << indexInArr << " bytes." << std::endl;
     return sendBytes(arrToSend, indexInArr);
 }
  
