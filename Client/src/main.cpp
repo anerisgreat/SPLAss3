@@ -54,7 +54,7 @@ int main (int argc, char *argv[]) {
             std::cout << "ACK " << opcode;
         }
         else{
-            std::cout << "ERR " << opcode;
+            std::cout << "ERROR " << opcode;
         }
 
         if(ack && message != "")

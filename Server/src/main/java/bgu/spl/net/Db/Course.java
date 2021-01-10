@@ -36,7 +36,7 @@ public class Course {
     }
 
     public boolean registerToCourse(DB_User dbu) {
-        synchronized (studentsAttend){
+        synchronized (this){
             if (studentsAttend.size() < maxCourses && !studentsAttend.contains(dbu.getUserName())) {
                 if (dbu.getCourses().containsAll(kdamCourses)) {
                     studentsAttend.add(dbu.getUserName());
@@ -48,7 +48,7 @@ public class Course {
         return false;
     }
     public boolean unRegisterFromCourse(DB_User dbu) {
-        synchronized (studentsAttend) {
+        synchronized (this) {
             if(studentsAttend.contains(dbu.getUserName())) {
                 studentsAttend.remove(dbu.getUserName());
                 dbu.removeCourse(courseNum);

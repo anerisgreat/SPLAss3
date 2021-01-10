@@ -31,7 +31,7 @@ public class Database {
     private Database() {
         courses = Collections.synchronizedList(new LinkedList<>());
         users = Collections.synchronizedList(new LinkedList<>());
-        initialize("src/main/Courses.txt");
+        initialize("Courses.txt");
     }
 
 

@@ -80,10 +80,8 @@ public class MsgProtocol implements MessagingProtocol<Message> {
             return new Err((short)5);
         }
         if (db.registerToCourse(cr.getCourseNum(), user.getUserName())){
-            System.out.println("CourseReg succeeded!");
             return new Ack((short)5, "");
         }
-        System.out.println("CourseReg totally bombed!");
         return new Err((short)5);
     }
 
@@ -120,7 +118,7 @@ public class MsgProtocol implements MessagingProtocol<Message> {
             return new Err((short)8);
         }
         String userMsg = "Student: " + ss.getStudentName() + "\n";
-        userMsg = userMsg + "Courses" + db.getCourses(ss.getStudentName()).toString();
+        userMsg = userMsg + "Courses: " + db.getCourses(ss.getStudentName()).toString().replaceAll(" ", "");
         return new Ack((short)8, userMsg);
     }
 
