@@ -162,11 +162,6 @@ public class Database {
     public String getCourseStats(int courseNum) {
         Course curr = getCourseByNum(courseNum);
         if (!courses.contains(curr)) {
-            System.out.println("It goes in here.");
-            for(Course c : courses) {
-                System.out.println(c.getCourseNum());
-            }
-
             return null;
         }
         //$$$not sure if i need to sync here$$$
